@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Workout Planner Pro</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: linear-gradient(135deg, #667eea, #764ba2);
+      --bg-secondary: #ffffff;
+      --bg-card: rgba(255,255,255,0.9);
+      --text-primary: #2d3748;
+      --text-secondary: #718096;
+      --accent: #667eea;
+      --accent-hover: #5a67d8;
+      --border: rgba(226,232,240,0.8);
+      --shadow: 0 10px 25px rgba(0,0,0,0.1);
+      --glass-bg: rgba(255,255,255,0.25);
+      --glass-border: rgba(255,255,255,0.18);
+    }
+    [data-theme="dark"] {
+      --bg-primary: linear-gradient(135deg, #0f0f23, #16213e);
+      --bg-secondary: #0f0f23;
+      --bg-card: rgba(26,26,46,0.9);
+      --text-primary: #e2e8f0;
+      --text-secondary: #a0aec0;
+      --accent: #4299e1;
+      --accent-hover: #3182ce;
+      --border: rgba(74,85,104,0.3);
+      --shadow: 0 10px 25px rgba(0,0,0,0.3);
+      --glass-bg: rgba(26,26,46,0.4);
+      --glass-border: rgba(255,255,255,0.1);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: 'Inter',sans-serif;
+      min-height:100vh;
+      transition:0.4s;
+    }
+    .container {
+      max-width:800px;
+      margin:0 auto;
+      padding:2rem;
+    }
+    .header {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      background:var(--glass-bg);
+      backdrop-filter:blur(20px);
+      border:1px solid var(--glass-border);
+      border-radius:20px;
+      padding:1rem 2rem;
+      margin-bottom:2rem;
+      box-shadow:var(--shadow);
+    }
+    .logo { display:flex; align-items:center; gap:1rem; }
+    .logo-icon {
+      width:50px; height:50px;
+      background:var(--accent);
+      border-radius:12px;
+      display:flex; align-items:center; justify-content:center;
+      color:#fff; font-size:1.5rem;
+    }
+    .logo h1 {
+      font-size:1.8rem;
+      background:var(--accent);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+    .theme-toggle {
+      background:var(--glass-bg);
+      backdrop-filter:blur(10px);
+      border:1px solid var(--glass-border);
+      border-radius:50%; width:48px; height:48px;
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer; font-size:1.2rem; transition:0.3s;
+    }
+    .theme-toggle:hover {
+      transform:scale(1.1);
+      background:var(--accent);
+      color:#fff;
+    }
+    .form-section {
+      background:var(--glass-bg);
+      backdrop-filter:blur(20px);
+      border:1px solid var(--glass-border);
+      border-radius:20px;
+      padding:1.5rem;
+      margin-bottom:1.5rem;
+      box-shadow:var(--shadow);
+      transition:0.3s;
+    }
+    .form-section:hover {
+      transform:translateY(-2px);
+      box-shadow:0 20px 40px rgba(0,0,0,0.15);
+    }
+    label {
+      display:block;
+      font-weight:600;
+      margin-bottom:0.5rem;
+      color: var(--text-primary);
+    }
+    .input-wrapper { position:relative; }
+    select {
+      width:100%; padding:0.75rem 1rem;
+      background:var(--bg-card);
+      border:2px solid var(--border);
+      border-radius:12px;
+      appearance:none;
+      cursor:pointer;
+      color: var(--text-primary);
+    }
+    .select-arrow {
+      position:absolute;
+      right:1rem; top:50%; transform:translateY(-50%);
+      pointer-events:none;
+      color:var(--text-secondary);
+    }
+    .range-wrapper { margin-top:1rem; }
+    .range-display {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:0.5rem;
+    }
+    .range-value {
+      background:var(--accent);
+      color:#fff;
+      padding:0.5rem 1rem;
+      border-radius:25px;
+      font-weight:600;
+    }
+    input[type=range] {
+      width:100%; height:8px;
+      background:var(--border);
+      appearance:none;
+      border-radius:4px;
+      outline:none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      appearance:none;
+      width:20px; height:20px;
+      border-radius:50%; background:var(--accent);
+      border:2px solid #fff;
+      cursor:pointer; transition:0.2s;
+    }
+    .radio-group {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+      gap:1rem;
+    }
+    .radio-option input { display:none; }
+    .radio-card {
+      background:var(--bg-card);
+      border:2px solid var(--border);
+      border-radius:12px;
+      padding:1rem;
+      text-align:center;
+      cursor:pointer;
+      transition:0.3s;
+      color: var(--text-primary);
+    }
+    .radio-option input:checked + .radio-card {
+      border-color:var(--accent);
+      transform:translateY(-2px);
+      box-shadow:var(--shadow);
+      color: var(--accent);
+    }
+    .generate-btn {
+      width:100%; padding:1rem;
+      background:var(--accent);
+      color:#fff;
+      border:none;
+      border-radius:50px;
+      font-size:1.1rem;
+      cursor:pointer;
+      transition:0.3s;
+      box-shadow:var(--shadow);
+    }
+    .generate-btn:hover {
+      background:var(--accent-hover);
+      box-shadow:0 20px 40px rgba(0,0,0,0.15);
+    }
+    .output-container .day-plan {
+      background:var(--glass-bg);
+      backdrop-filter:blur(20px);
+      border:1px solid var(--glass-border);
+      border-radius:20px;
+      padding:1.5rem;
+      margin-bottom:1rem;
+      opacity:0; transform:translateY(20px);
+      animation:fadeInUp 0.6s forwards;
+    }
+    @keyframes fadeInUp { to { opacity:1; transform:translateY(0); } }
+    .day-plan h3 {
+      display:flex;
+      align-items:center;
+      gap:0.5rem;
+      color:var(--accent);
+      margin-bottom:1rem;
+    }
+    .exercise-item {
+      display:flex;
+      align-items:center;
+      gap:0.75rem;
+      background:var(--bg-card);
+      border:1px solid var(--border);
+      border-radius:10px;
+      padding:0.75rem;
+      transition:0.3s;
+      color: var(--text-primary);
+    }
+    .exercise-item:hover {
+      transform:translateX(5px);
+      border-color:var(--accent);
+    }
+    .exercise-icon {
+      background:var(--accent);
+      color:#fff;
+      width:32px; height:32px;
+      border-radius:8px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:0.9rem;
+    }
+    .exercise-text { color: var(--text-primary); }
+    .loading { text-align:center; display:none; padding:2rem; }
+    .spinner {
+      width:40px; height:40px;
+      border:4px solid var(--border);
+      border-top-color:var(--accent);
+      border-radius:50%; animation:spin 1s linear infinite;
+      margin:0 auto 1rem;
+    }
+    @keyframes spin { to { transform:rotate(360deg); } }
+  </style>
+</head>
+<body data-theme="dark">
+  <div class="container">
+    <header class="header">
+      <div class="logo">
+        <div class="logo-icon"><i class="fas fa-dumbbell"></i></div>
+        <h1>Workout Planner Pro</h1>
+      </div>
+      <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+    </header>
+    <div class="form-section">
+      <label><i class="fas fa-bullseye"></i> Fitness Goal</label>
+      <div class="input-wrapper">
+        <select id="goal">
+          <option>Build Muscle</option>
+          <option>Lose Weight</option>
+          <option>Improve Endurance</option>
+          <option>General Fitness</option>
+        </select>
+        <i class="fas fa-chevron-down select-arrow"></i>
+      </div>
+    </div>
+    <div class="form-section">
+      <label><i class="fas fa-calendar-week"></i> Training Frequency</label>
+      <div class="range-wrapper">
+        <div class="range-display">
+          <span>Days/week</span>
+          <div id="daysLabel" class="range-value">3</div>
+        </div>
+        <input type="range" id="days" min="2" max="7" value="3">
+      </div>
+    </div>
+    <div class="form-section">
+      <label><i class="fas fa-chart-line"></i> Experience Level</label>
+      <div class="radio-group">
+        <div class="radio-option">
+          <input type="radio" name="exp" value="Beginner" id="b" checked>
+          <label for="b" class="radio-card"><i class="fas fa-seedling"></i><div>Beginner</div></label>
+        </div>
+        <div class="radio-option">
+          <input type="radio" name="exp" value="Intermediate" id="i">
+          <label for="i" class="radio-card"><i class="fas fa-fire"></i><div>Intermediate</div></label>
+        </div>
+        <div class="radio-option">
+          <input type="radio" name="exp" value="Advanced" id="a">
+          <label for="a" class="radio-card"><i class="fas fa-crown"></i><div>Advanced</div></label>
+        </div>
+      </div>
+    </div>
+    <div class="form-section generate-section">
+      <button id="generateBtn" class="generate-btn"><i class="fas fa-magic"></i> Generate My Workout Plan</button>
+    </div>
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <p>Loading...</p>
+    </div>
+    <div id="output" class="output-container"></div>
+  </div>
+  <script>
+    // Theme toggle
+    const body = document.body;
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('click', () => {
+      const theme = body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      body.setAttribute('data-theme', theme);
+      themeToggle.firstElementChild.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    });
+
+    // Data pools
+    const EXERCISES = {
+      Chest:['Push-ups','Bench Press','Chest Fly','Incline Press'],
+      Back:['Pull-ups','Deadlift','Row','Lat Pulldown'],
+      Legs:['Squat','Lunge','Leg Press','Extension'],
+      Shoulders:['OHP','Lateral Raise','Front Raise','Shrugs'],
+      Arms:['Bicep Curl','Tricep Dip','Hammer Curl','Pushdown'],
+      Core:['Plank','Twist','Leg Raises','Crunch']
+    };
+    const SPLITS = {2:[['Full Body'],['Full Body']],3:[['Push'],['Pull'],['Legs']],4:[['Upper'],['Lower'],['Upper'],['Lower']],5:[['Chest'],['Back'],['Legs'],['Shoulders'],['Arms']],6:[['Push'],['Pull'],['Legs'],['Push'],['Pull'],['Legs']],7:[['Chest'],['Back'],['Legs'],['Shoulders'],['Arms'],['Core'],['Rest']]};
+    const MAP = {'Full Body':['Chest','Back','Legs','Shoulders','Arms','Core'],'Push':['Chest','Shoulders','Arms'],'Pull':['Back','Arms'],'Legs':['Legs'],'Upper':['Chest','Back','Shoulders','Arms'],'Lower':['Legs','Core'],'Chest':['Chest'],'Back':['Back'],'Shoulders':['Shoulders'],'Arms':['Arms'],'Core':['Core'],'Rest':[]};
+    function sample(a,n){const c=[...a],o=[];for(let i=0;i<n&&c.length;i++)o.push(c.splice(Math.floor(Math.random()*c.length),1)[0]);return o;}
+    function genDay(s,p){const g=MAP[s]||[];if(!g.length)return['Rest day – take it easy!'];let r=[];g.forEach(x=>sample(EXERCISES[x],p).forEach(e=>r.push(x+': '+e+' – 3×10')));return r;}
+    function genPlan(d,e){const sch=SPLITS[d]||SPLITS[3],p=e==='Beginner'?2:e==='Intermediate'?3:4;return sch.map((s,i)=>({day:'Day '+(i+1)+': '+s,ex:genDay(s[0],p)}));}
+    const daysEl=document.getElementById('days'),daysLbl=document.getElementById('daysLabel');daysEl.oninput=e=>daysLbl.textContent=e.target.value;
+    document.getElementById('generateBtn').onclick=()=>{const ld=document.getElementById('loading'),out=document.getElementById('output');ld.style.display='block';out.innerHTML='';setTimeout(()=>{const p=genPlan(+daysEl.value,document.querySelector('input[name="exp"]:checked').value);ld.style.display='none';p.forEach((d,i)=>{const div=document.createElement('div');div.className='day-plan';div.style.animationDelay=(i*0.1)+'s';const items=d.ex.map(ex=>`<li class="exercise-item"><div class="exercise-text">${ex}</div></li>`).join('');div.innerHTML=`<h3>${d.day}</h3><ul>${items}</ul>`;out.appendChild(div);});},500);};
+  </script>
+</body>
+</html>
